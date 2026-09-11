@@ -2,20 +2,31 @@ import os
 import aiohttp
 import discord
 from dotenv import load_dotenv
+from flask import Flask
+
+DISCORD_TOKEN = os.getenv('DISCORD_TOKEN')
+API_KEY = os.getenv('API_KEY')
 
 load_dotenv()
 # Configura as permissões (intents) do bot
 intents = discord.Intents.default()
 intents.message_content = True
 
-DISCORD_TOKEN = os.getenv('DISCORD_TOKEN')
-API_KEY = os.getenv('API_KEY')
+app = Flask('')
 
 # Inicializa o cliente do bot
 client = discord.Client(intents=intents)
 
 url_base = 'https://horas.zibikoski.com.br/api/v1/'
 
+@app.route('/')
+def home():
+  return 'O bot está online!'
+
+def run_web_server():
+  # O Render injeta uma variável chamada PORT automaticamente. Temos que usá-la!
+  port = int(os.environ.get('PORT', 8080))
+  app.run(host='0.0.0.0', port=port)
 
 @client.event
 async def on_ready():
@@ -54,5 +65,9 @@ async def on_message(message):
   if message.content.lower() == '!ping':
     await message.channel.send('Pong!')
 
+if __name__ == '__main__':
+  # Inicia o servidor web em paralelo
+  server_thread = Thread(target=run_web_server)
+  server_thread.start()
 
 client.run(DISCORD_TOKEN)
