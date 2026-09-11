@@ -3,6 +3,7 @@ import aiohttp
 import discord
 from dotenv import load_dotenv
 from flask import Flask
+from threading import Thread
 
 DISCORD_TOKEN = os.getenv('DISCORD_TOKEN')
 API_KEY = os.getenv('API_KEY')
